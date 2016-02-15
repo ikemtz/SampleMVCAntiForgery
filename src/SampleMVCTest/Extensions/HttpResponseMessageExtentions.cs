@@ -9,6 +9,12 @@ namespace SampleMVCTest.Extensions
 {
     public static  class HttpResponseMessageExtentions
     {
+        /// <summary>
+        /// This method will get the antiforgery token provided in the form.  It's not pretty but it works for now.
+        /// </summary>
+        /// <param name="resp">The HttpResponseMessage object that contains a form with an AntiForgery token.</param>
+        /// <param name="antiForgeryFormTokenName">The name of the AntiForgery form field.</param>
+        /// <returns></returns>
         public static async Task<KeyValuePair<string, string>> GetAntiForgeryFormToken(this HttpResponseMessage resp, string antiForgeryFormTokenName)
         {
             const string val = " value=\"";
@@ -25,6 +31,17 @@ namespace SampleMVCTest.Extensions
             return new KeyValuePair<string, string>(antiForgeryFormTokenName, token);
         }
 
+        public static CookieHeaderValue GetAntiForgeryCookie(this HttpResponseMessage resp, string cookieName)
+        {
+            return GetCookie(resp, cookieName);
+        }
+
+        /// <summary>
+        /// This method will get the AntiForgery cookie from an HttpResponse.  
+        /// </summary>
+        /// <param name="resp">The HttpResponseMessage object that contains an AntiForgery cookie token.</param>
+        /// <param name="cookieName">The name of the AntiForgery cookie.</param>
+        /// <returns></returns>
         public static CookieHeaderValue GetCookie(this HttpResponseMessage resp, string cookieName)
         {
             IEnumerable<string> values;

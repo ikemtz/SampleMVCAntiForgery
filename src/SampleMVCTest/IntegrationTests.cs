@@ -26,11 +26,14 @@ namespace SampleMVCTest
             using (var th = InitTestServer())
             {
                 var client = th.CreateClient();
+                //First we submit an HttpGet request in order to obtain the AntiForgery tokens.
                 var result = await client.GetAsync(registerUri);
                 result.EnsureSuccessStatusCode();
-                var cookieVal = result.GetCookie(AntiForgeryCookieName).ToString();
+                var cookieVal = result.GetAntiForgeryCookie(AntiForgeryCookieName).ToString();
                 var formTokenVal = await result.GetAntiForgeryFormToken(AntiForgeryFormTokenName);
+                //Setup the client to provide the AntiForgery cookie on subsequent requests.
                 client.DefaultRequestHeaders.Add("Cookie", cookieVal);
+                //Submitting an HttpPost request providing the AntiForgery form field.
                 result = await client.PostFormDataAsync<RegisterViewModel>(registerUri, vm, formTokenVal);
                 Assert.Equal(HttpStatusCode.Found, result.StatusCode);
             }
